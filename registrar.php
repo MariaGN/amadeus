@@ -1,4 +1,64 @@
-  <div class="wrapper">
+<script type="text/javascript">  
+    $(document).ready(function(){
+       //alert("Documento preparado!");
+      
+      $("#telefono").val("981-");
+       
+       //alert($("#telefono").val());
+       
+       $("#e-mail").click(function(){
+          $("#e-mail").val("@");
+          //outra forma seria a seguinte
+          //$(this).val("@");
+       });
+       
+       
+        $("#nombre").blur(function(){
+            if($(this).val()==""){
+                //falla o focus , ainda que funciona en chrome
+                // $(this).focus();
+               // alert ("El campo nombre es obligatorio");
+               //outra forma: metemos un div despois dos botons e accedemos aqui o mensaxe
+               $("#mensajes").hide().html("El campo nombre es obligatorio").fadeIn(1000)
+               .css("background-color","red")
+               .delay(2000).fadeOut(1000,function(){
+                   $("#nombre").focus();
+                });
+               //programar que espere ese tempo, sería asi:
+              // .fadeIn(1000,function(){
+               //    alert("termino el FadeIn");
+               //    $(this).css("color","red");
+              // });
+            
+            }
+        });
+        
+        
+        
+        
+        
+       // $("#nick").keyup(function(){
+         //   alert("peticion ajax ...");
+        //});
+        
+        $("#nick").blur(function(){
+          // $("#mensajes").load("pasos.txt").fadeIn();
+          
+          //outra forma serían as seguintes tres liñas          
+          $.get("pasos.txt",function(resultado){
+              $("#mensajes").html(resultado).fadeIn();
+          })
+          
+          
+        });
+        
+        
+        
+        
+        
+    });
+ </script>
+<div class="wrapper">
 
 	       <div class="grids top">
 
@@ -43,7 +103,7 @@
 		    <!--===============================================================  Contact form =====================================================================================-->
 		    <div class="grid-10 grid">
 
-			 <h2>Contact us</h2>
+			 <h2>Formulario de registro</h2>
 			 <form  action="#" method="post" enctype="multipart/form-data" onsubmit="return false">
                               <table class="form">
                                    <tr>
@@ -60,18 +120,18 @@
                                     <tr>
 					<th>
 					     <label for="password">
-						  Password
+						  Contraseña
 					     </label>
 					</th>
 					<td>
-					     <input class="input_full" type="text" id="password" name="password" required="required" />
+					     <input class="input_full" type="password" id="password" name="password" required="required" />
 
 					</td>
 				   </tr>
                                     <tr>
 					<th>
 					     <label for="name">
-						  Name
+						  Nombre
 					     </label>
 					</th>
 					<td>
@@ -82,7 +142,7 @@
                                    <tr>
 					<th>
 					     <label for="surname">
-						  Surname
+						  Apellidos
 					     </label>
 					</th>
 					<td>
@@ -118,7 +178,7 @@
 
 					<th>
 					     <label for="tel">
-						  Phone
+						  Telefono
 					     </label>
 					</th>
 					<td>
@@ -128,8 +188,12 @@
                               </table>
 
                               <p>
-				   <input type="submit" value="Send" class="float_left" />
-				   <input type="reset" value="Reset" class="float_right">
+				   <input type="submit" value="Enviar" class="float_left" />
+				   <input type="reset"  value="Borrar" class="float_right">
+                              </p>
+                              
+                              <p>
+                                    <div id="mensajes"></div>
                               </p>
 			 </form>
 
