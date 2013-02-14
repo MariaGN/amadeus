@@ -1,6 +1,13 @@
 <script type="text/javascript">  
+  
+    
+    
     $(document).ready(function(){
        //alert("Documento preparado!");
+      
+      
+      
+      
       
       $("#telefono").val("981-");
        
@@ -11,6 +18,11 @@
           //outra forma seria a seguinte
           //$(this).val("@");
        });
+       
+       
+       
+       
+       
        
        
         $("#nombre").blur(function(){
@@ -47,7 +59,20 @@
           //outra forma serían as seguintes tres liñas          
           $.get("pasos.txt",function(resultado){
               $("#mensajes").html(resultado).fadeIn();
-          })
+          });
+          
+          
+          
+          
+         
+          $.post("chequearnick.php",{nick: $("#nick").val()},function(respuesta){
+              
+             if(respuesta == "Nick en uso") {
+                 setTimeout('$("#nick").focus()',0);
+             }
+          });
+          
+          
           
           
         });
@@ -55,45 +80,73 @@
         
         
         
+            
+        
+        
+        
+        
+        $("#nick").keyup(function(){
+          
+            $.post("chequearnick.php",{nick:$("#nick").val()},function(respuesta){
+                
+                if (respuesta=="Nick en uso"){
+                    $("#nick").css("background-color","red");
+                    $("#mensajes").clearQueue().fadeTo(0,0).html(respuesta)
+                .css("background-color","red").fadeTo(500,1).fadeTo(500,0);
+                }
+                
+                else
+                    $("#nick").css("background-color","green");
+            });
+            
+        });
+        
+        
+        
+        
+        
+        
         
     });
+    
+    
+    
+    
+    
+    
+      
+      
+     
+    
+    
+    
+    
+    
+    
+    
+    
  </script>
 <div class="wrapper">
 
 	       <div class="grids top">
 
 		    <div class="grid-6 grid">
-			 <h2>Address</h2>
-			 <div>
-			      <p class="bottom">
-				   Jane Doe<br />
-				   Some street 123<br />
-				   Name of State<br />
-				   Country<br /><br />
-				   Phone: 123 456 789<br />
-				   Fax: 123 456 789 - 11<br />
-				   Email: jane@some.com
-                              </p>
-			 </div>
-
-
-			 <div class="green bottom">
-			      <h3>Formalize</h3>
-			      <p>This subpage includes the great JQuery plugin <strong>
-					<a href="http://formalize.me/" title="Formalize Website">Formalize</a></strong>
-				   by Nathan Smith.
-				   <a href="http://formalize.me/" title="Formalize Website">Visit the website</a> to find out what it does and see the demos!
-				   You don´t have to use a table as shown here (this is just an example), you can build your form without tables, too.
-				   Inspect the CSS to utilize the classes that fit your needs.<br />
-				   Comment or delete the section "Forms" in inuit.css when you make use of Formalize so the styles won´t interfere.
-			      </p>
-			 </div>
-
-			 <div>
-			      <p class="message warning bottom">
-				   <b>Note:</b> This is just a demo for contact form styles and behaviour. <b>It doesn't actually submit anything.</b>
-				   To make it work, you will have to include a fitting script.
-                              </p>
+			<h4>Ventajas como usuario registrado</h4>
+	       <div>
+		    <p class="bottom">
+		    <ul>
+			 <li>Billetes + baratos</li>
+			 <li>Low cost airlines</li>
+			 <li>Todas las compañías aéreas</li>
+			 <li>Volamos a todo el mundo</li>
+			 <li>Número ilimitado de reservas</li>
+			 <li>Notificaciones automáticas de su reserva</li>
+			 <li>Información de cambios</li>
+			 <li>Mapas de aeropuertos</li>
+			 <li>Información meteorológica en destino</li>
+			 <li>Etc...</li>
+		    </ul>
+		    </p>
 			 </div>
 		    </div>
 
@@ -195,6 +248,11 @@
                               <p>
                                     <div id="mensajes"></div>
                               </p>
+                              
+                               <p>
+                                    <div id="errores" class="verdes"></div>
+                              </p>
+                              
 			 </form>
 
 
