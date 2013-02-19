@@ -1,131 +1,4 @@
-<script type="text/javascript">  
-  
-    
-    
-    $(document).ready(function(){
-       //alert("Documento preparado!");
-      
-      
-      
-      
-      
-      $("#telefono").val("981-");
-       
-       //alert($("#telefono").val());
-       
-       $("#e-mail").click(function(){
-          $("#e-mail").val("@");
-          //outra forma seria a seguinte
-          //$(this).val("@");
-       });
-       
-       
-       
-       
-       
-       
-       
-        $("#nombre").blur(function(){
-            if($(this).val()==""){
-                //falla o focus , ainda que funciona en chrome
-                // $(this).focus();
-               // alert ("El campo nombre es obligatorio");
-               //outra forma: metemos un div despois dos botons e accedemos aqui o mensaxe
-               $("#mensajes").hide().html("El campo nombre es obligatorio").fadeIn(1000)
-               .css("background-color","red")
-               .delay(2000).fadeOut(1000,function(){
-                   $("#nombre").focus();
-                });
-               //programar que espere ese tempo, sería asi:
-              // .fadeIn(1000,function(){
-               //    alert("termino el FadeIn");
-               //    $(this).css("color","red");
-              // });
-            
-            }
-        });
-        
-        
-        
-        
-        
-       // $("#nick").keyup(function(){
-         //   alert("peticion ajax ...");
-        //});
-        
-        $("#nick").blur(function(){
-          // $("#mensajes").load("pasos.txt").fadeIn();
-          
-          //outra forma serían as seguintes tres liñas          
-          $.get("pasos.txt",function(resultado){
-              $("#mensajes").html(resultado).fadeIn();
-          });
-          
-          
-          
-          
-         
-          $.post("chequearnick.php",{nick: $("#nick").val()},function(respuesta){
-              
-             if(respuesta == "Nick en uso") {
-                 setTimeout('$("#nick").focus()',0);
-             }
-          });
-          
-          
-          
-          
-        });
-        
-        
-        
-        
-            
-        
-        
-        
-        
-        $("#nick").keyup(function(){
-          
-            $.post("chequearnick.php",{nick:$("#nick").val()},function(respuesta){
-                
-                if (respuesta=="Nick en uso"){
-                    $("#nick").css("background-color","red");
-                    $("#mensajes").clearQueue().fadeTo(0,0).html(respuesta)
-                .css("background-color","red").fadeTo(500,1).fadeTo(500,0);
-                }
-                
-                else
-                    $("#nick").css("background-color","green");
-            });
-            
-        });
-        
-        
-        
-        
-        
-        
-        
-    });
-    
-    
-    
-    
-    
-    
-      
-      
-     
-    
-    
-    
-    
-    
-    
-    
-    
- </script>
+<script type="text/javascript" src="js/registro.js"></script>
 <div class="wrapper">
 
 	       <div class="grids top">
@@ -157,7 +30,10 @@
 		    <div class="grid-10 grid">
 
 			 <h2>Formulario de registro</h2>
-			 <form  action="#" method="post" enctype="multipart/form-data" onsubmit="return false">
+                        <p>
+                              <div id="mensajes"></div>
+                         </p>
+			 <form  action="#" name="formulario" id="formulario" method="post">
                               <table class="form">
                                    <tr>
 					<th>
@@ -223,7 +99,7 @@
 					</th>
 					<td>
 
-					     <input class="input_full" type="email" id="e-mail" name="e-mail" required="required" />
+					     <input class="input_full" type="email" id="email" name="email" required="required" />
 					</td>
 				   </tr>
 
@@ -245,9 +121,7 @@
 				   <input type="reset"  value="Borrar" class="float_right">
                               </p>
                               
-                              <p>
-                                    <div id="mensajes"></div>
-                              </p>
+                              
                               
                                <p>
                                     <div id="errores" class="verdes"></div>
