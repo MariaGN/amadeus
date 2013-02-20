@@ -1,4 +1,7 @@
 <?php
+//Borrar este fichero dado que la funcion de chequear nick la introducimos en basedatos.php y modificamos por tanto el fichero registro.js y peticiones.js
+
+
 // Datos configuraciÃ³n de la conexiÃ³n al MySQL.
 $nombrebase="c29prueba";
 $usuario="c29a11mariagn";

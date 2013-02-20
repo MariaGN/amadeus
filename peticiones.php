@@ -14,14 +14,14 @@ require_once('lib/basedatos.php');
 $mibase=Basedatos::getInstancia();
 switch($_GET['op']){
     case 1: //chequear nick
-        
-        
-        
+        echo $mibase->chequearnick($_POST['nick']);    
         break;
+    
     case 2: //alta usuarios
         echo $mibase->insertarUsuario($_POST['nick'],$_POST['password'],$_POST['nombre'],$_POST['apellidos'],$_POST['dni'],$_POST['email'],$_POST['telefono']);
         
         break;
+    
     case 3: //listado de usuarios
         
         break;

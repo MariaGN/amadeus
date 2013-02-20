@@ -61,7 +61,7 @@
         $("#nick").blur(function(){
           // $("#mensajes").load("pasos.txt").fadeIn();
           
-          //outra forma serían as seguintes tres liñas          
+          //outra forma serían as seguintes tres liñas 
           $.get("pasos.txt",function(resultado){
               $("#mensajes").html(resultado).fadeIn();
           });
@@ -69,8 +69,8 @@
           
           
           
-         
-          $.post("chequearnick.php",{nick: $("#nick").val()},function(respuesta){
+          //Operación op=1 -> chequear nick
+          $.post("peticiones.php?op=1",{nick: $("#nick").val()},function(respuesta){
               
              if(respuesta == "Nick en uso") {
                  setTimeout('$("#nick").focus()',0);
@@ -92,7 +92,7 @@
         
         $("#nick").keyup(function(){
           
-            $.post("chequearnick.php",{nick:$("#nick").val()},function(respuesta){
+            $.post("peticiones.php?op=1",{nick:$("#nick").val()},function(respuesta){
                 
                 if (respuesta=="Nick en uso"){
                     $("#nick").css("background-color","red");

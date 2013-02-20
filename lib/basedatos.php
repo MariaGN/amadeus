@@ -84,7 +84,11 @@ class Basedatos{
              //objeto tipo stement para
              
              //Enlazamos los parametros
-             $stmt->bind_param('sssssss',$nick,encriptar($password,10),$nombre,$apellidos,$dni,$email,$telefono);  //a pass a gardamos encriptada=> chamamos funcion encriptar de funciones.php
+             
+             // (sustituimos encriptar($password,10) en $stmt->bind_param('sssssss',$nick,encriptar($password,10),$nombre,$apellidos,$dni,$email,$telefono);
+             // e gardamos ese valor na variable $encriptada para evitar o warning que saia  )
+             $encriptada = encriptar($password, 10);
+             $stmt->bind_param('sssssss',$nick,$encriptada,$nombre,$apellidos,$dni,$email,$telefono);  //a pass a gardamos encriptada=> chamamos funcion encriptar de funciones.php
              
              
              //Ejecutamos la instruccion
@@ -95,6 +99,41 @@ class Basedatos{
     
          
          
+             public function chequearnick($nick){
+                 // Preparamos la consulta.
+                 $stmt = self::$_mysqli->prepare("SELECT * from amadeus_usuarios where nick=?") or die(self::$_mysqli->error);
+
+                 // Enlazamos los parÃ¡metros (s string)
+                 // http://es2.php.net/manual/es/mysqli-stmt.bind-param.php
+                 $stmt->bind_param("s",$nick);
+
+
+                 // Ejecutamos la consulta preparada.
+                 $stmt->execute();
+
+                 // Si es una consulta de select almacenamos el resultado.
+                 $stmt->store_result();
+
+                 // NÃºmero de filas obtenidas.
+                 $numfilas=$stmt->num_rows;   
+                   
+                 // Liberamos el espacio que ocupa ese resultado en memoria.
+                 $stmt -> free_result();              
+                 
+                 if ($numfilas==1)
+                      return "Nick en uso";
+                 else
+                      return "Nick disponible";
+
+                 /* Liberamos el espacio que ocupa ese resultado en memoria.
+                 $stmt -> free_result();   
+                  
+                  Se o deixamos aquí non o executaría nunca pois o ter return sempre terminaría ahí
+                  */           
+                 
+                 
+                 
+         }
          
     
 }
