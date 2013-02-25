@@ -120,12 +120,12 @@
          
          //op=2 es alta de usuarios  //ver peticiones.php
          $.post("peticiones.php?op=2",datos,function(resultado){
-
-             if(resultado=="OK"){
+              //quitamos a comparacion do if dado que xa non temos nunca a mensaxe OK, kitamos en basedatos.php
+            // if(resultado=="OK"){
                  $("#formulario").fadeOut(function(){
-                     $("#mensajes").fadeTo(0,0).css("background-color","green").html("Su registro ha sido dado de alta correctamente").fadeTo(1,1);
+                     $("#mensajes").fadeTo(0,0).css("background-color","green").html(resultado).fadeTo(1,1);
                  });
-             }
+             //}
          });
        });
         

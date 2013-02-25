@@ -80,7 +80,7 @@ class Basedatos{
          
          public function insertarUsuario($nick,$password,$nombre,$apellidos,$dni,$email,$telefono){
              //Preparamos la instruccion SQL.
-             $stmt=self::$_mysqli->prepare("insert into amadeus_usuarios (nick,password,nombre,apellidos,dni,email,telefono) values(?,?,?,?,?,?,?)") or die (self::$_mysqli->error);
+             $stmt=self::$_mysqli->prepare("insert into amadeus_usuarios (nick,password,nombre,apellidos,dni,email,telefono,token) values(?,?,?,?,?,?,?,?)") or die (self::$_mysqli->error);
              //objeto tipo stement para
              
              //Enlazamos los parametros
@@ -88,13 +88,25 @@ class Basedatos{
              // (sustituimos encriptar($password,10) en $stmt->bind_param('sssssss',$nick,encriptar($password,10),$nombre,$apellidos,$dni,$email,$telefono);
              // e gardamos ese valor na variable $encriptada para evitar o warning que saia  )
              $encriptada = encriptar($password, 10);
-             $stmt->bind_param('sssssss',$nick,$encriptada,$nombre,$apellidos,$dni,$email,$telefono);  //a pass a gardamos encriptada=> chamamos funcion encriptar de funciones.php
+             $token=md5($encriptada);
+             $stmt->bind_param('ssssssss',$nick,$encriptada,$nombre,$apellidos,$dni,$email,$telefono,$token);  //a pass a gardamos encriptada=> chamamos funcion encriptar de funciones.php
              
              
              //Ejecutamos la instruccion
              $stmt->execute() or die(self::$_mysqli->error);
+             $contenido="Estimado señor/a $nombre $apellidos.<br/><br/>Hemos recibido una peticion de registros en nuestra web de viajes Amadeus.";
+             $contenido.="Si usted no ha realizado diche petición, simplemente borre este correo y en breve será borrado de nuestra base de datos.<br/><br/>";
+             $contenido.="En otro caso, confirme su registro antes de 24 H en la siguiente dirección de Amadeus:<br/>";
+             $contenido.="<a href='http://mariagn.local/amadeus/confirmar.html?nick=$nick&token=$token'>Confirmación registro en web viajes Amadeus</a><br/><br/>";
+             $contenido.="IP registrada: ".obtenerIP()."<br/><br/>";
+             $contenido.="reciba un cordial saludo.<br/><br/>Agencia de viajes Amadeus & copy; 2013";
+             if(enviarCorreo($nombre.' '.$apellidos,$email,'Confirmación registro en Viajes Amadeus',$contenido))
+                     return "Registro realizado correctamente.<br/><br/>Le hemos enviado una confirmación a su correo eléctronico:<br/>$email";
+                 else {
+                     return "! ATENCION!<br/><br/> Se ha producido un fallo al enviar el correo a $email.<br/>Contacte con ".Config::$mailEmailRemitente ."para informar del programa";
+                 }
              
-             return "OK";
+            
          }
     
          

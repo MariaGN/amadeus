@@ -10,8 +10,8 @@ class Config{
     
     
     //Parametros de configuración del correo
-    public static $mailNombreRemitente='Maria Nimo';
-    public static $mailRemitente ='info@mariagn.local';
+    public static $mailNombreRemitente='María Nimo';
+    public static $mailEmailRemitente ='info@mariagn.local';
     
     //datos de configuración del servidor del correo
     public static $mailServidor='localhost';
