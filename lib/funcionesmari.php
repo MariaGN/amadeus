@@ -150,6 +150,7 @@ function enviarCorreo($nombreDestinatario,$emailDestinatario,$asunto,$contenido,
             $correo->Password=$passwordCorreo;
             $correo->SetFrom($emailRemitente,$nombreRemitente);
             $correo->AddReplyTo($emailRemitente,$nombreRemitente);
+            $correo->AddAddress($emailDestinatario,$nombreDestinatario);
             $correo->Subject=$asunto;
             $correo->AltBody='Para ver este mensaje utilice un visor compatible con HTML.';
             $correo->MsgHTML($contenido);
@@ -172,7 +173,10 @@ function enviarCorreo($nombreDestinatario,$emailDestinatario,$asunto,$contenido,
             if($correo->Send()){
                 return TRUE;}
             else{
-                return FALSE;}
+                echo $correo->ErrorInfo;
+                //return FALSE;
+                }
+            
                 
            } //chave de validacion de spam
         }

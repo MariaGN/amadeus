@@ -3,7 +3,7 @@ RewriteEngine on
 Options -Indexes  
 # para que nos asome todo o directorio  
 
-RewriteRule ^(.*).html$  controlador.php?inc=$1
+RewriteRule ^(.*).html$  controlador.php?inc=$1 [QSA,L]  #engada os strings da query, L é para que non siga evaluando
 #. significa 1 caracter, * 1 ou mais veces
 # $1 correspondese a (.*)
 

@@ -1,4 +1,6 @@
 <?php
+//Activamos las sesiones
+@session_start();
 
 //Comprobamos si existe el fichero a cargar
 if (isset($_GET['inc'])&& $_GET['inc']!= "")

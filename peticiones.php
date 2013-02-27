@@ -1,6 +1,9 @@
 <?php
 //página que gestionará todas las peticiones Ajax
 
+//Activamos las sesiones
+@session_start();
+
 //para bloquear la caché de los navegadores
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1990 00:00:00 GMT');
@@ -22,7 +25,8 @@ switch($_GET['op']){
         
         break;
     
-    case 3: //listado de usuarios
+    case 3: //Chequear inicio sesión
+        echo $mibase->chequearAcceso($_POST['nick'],$_POST['password']);
         
         break;
 }

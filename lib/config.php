@@ -1,6 +1,9 @@
 <?php
 //Datos de configuración de la aplicación
 class Config{
+    
+    
+    public static $urlAplicacion='http://www.raveiga.local/amadeus';
     //Configuracion de la bbdd
     public static $dbServidor='mariagn.local';
     public static $dbUsuario="c29a11mariagn";
