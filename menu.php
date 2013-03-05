@@ -1,3 +1,4 @@
+<script type="text/javascript"  src="js/menu.js"></script>
 <div class="wrapper">
      <a href="./" id="logo"><img src="img/logo.png" alt="something" />
 	  <h1 class="accessibility">Amadeus - Desarrollo Web Entorno Servidor Modular - San Clemente.</h1></a>
@@ -20,7 +21,7 @@
 
      <!-- Menú de opciones -->
      <ul id="nav" class="main">
-	  <li><a href="index.html" class="active">Inicio</a></li>
+	  <li><a href="index.html" >Inicio</a></li>
           <li><a href="contactar.html">Contactar</a></li>
           <?php
          //si hai un usuario conectado
