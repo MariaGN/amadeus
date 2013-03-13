@@ -3,7 +3,7 @@
 class Config{
     
     
-    public static $urlAplicacion='http://www.raveiga.local/amadeus';
+    public static $urlAplicacion='http://www.mariagn.local/amadeus';
     //Configuracion de la bbdd
     public static $dbServidor='mariagn.local';
     public static $dbUsuario="c29a11mariagn";

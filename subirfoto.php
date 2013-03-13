@@ -1,4 +1,4 @@
-
+<script type="text/javascript" src="js/editarusuario.js"></script>
 
 <style type="text/css">
     #mensajes{
@@ -26,7 +26,7 @@
                     if(isset($_SESSION['fotografia'])&& $_SESSION['fotografia']!='')
                         echo '<li><a href="borrarfoto.php"/>Borrar fotografía</a></li>';
                     ?>
-                    <li><a href="bajausuario.html" />Darse de Baja</a></li>
+                    <li><a href="bajausuario.html" id="bajausuario" />Darse de Baja</a></li>
                 </ul>
                 </p>
             </div>
@@ -35,7 +35,8 @@
         <div class="grid-6 grid">
             <h3>Fotografía de su perfil</h3>
             <div id="mensajes"></div>
-            <form action="upload.php" name="formulario" id="formulario" method="post" enctype="multipart/form-data">
+            <!-- distinto nome e id de formulario por ter en editarusuario a funcion de -->
+            <form action="upload.php" name="formulario1" id="formulario1" method="post" enctype="multipart/form-data">
                 <p>
                     <input type="file" name="ficherosubido" name="ficherosubido" /><br/> Exensiones: jpg, jpeg, gif, png.
                     

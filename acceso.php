@@ -32,7 +32,7 @@
                 <table class="form">
                     <tr>
                         <th>
-                            <label for="nick">Nick</label>
+                            <label for="nick" required autofocus>Nick</label>
                         </th>
                         <td>
                             <input type="text" id="nick" name="nick" required="required" />

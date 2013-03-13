@@ -37,6 +37,18 @@ $(document).ready(function()
             });
         });
     });
-    
+ 
+ $('#bajausuario').click(function()
+{
+    if(confirm("¿Está seguro de darse de baja en la web?"))
+        //petición ajax de borrado
+            $.post("peticiones.php?op=6",function(resultado)
+            {
+               if(resultado=='OK')
+                   window.location.href="desconectar.php"
+            });
+        
+});
+ 
     
 });

@@ -39,5 +39,9 @@ switch($_GET['op']){
         echo $mibase->actualizarUsuario($_POST['password'],$_POST['nombre'],$_POST['apellidos'],$_POST['dni'],$_POST['email'],$_POST['telefono']);
         
         break;
+    
+    case 6: //borrado de usuario y fotografia en el servidor
+        echo $mibase->borrarUsuario();
+        break;
 }
 ?>

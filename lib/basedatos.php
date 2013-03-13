@@ -105,7 +105,7 @@ class Basedatos {
         $contenido.="Si usted no ha realizado dicha petición, simplemente borre este correo y en breve el registro será borrado de nuestra base de datos.<br/><br/>";
         $contenido.="En otro caso, confirme su registro antes de 24 H en la siguiente dirección de Amadeus:<br/>";
         $contenido.="<a href='".Config::$urlAplicacion."/confirmar.html?nick=$nick&token=$token'>Confirmación registro en web viajes Amadeus</a><br/><br/>";
-        $contenido.="IP registrada: ".obtenerIP()."<br/><br/>";
+        //$contenido.="IP registrada: ".obtenerIP()."<br/><br/>";
         $contenido.="Reciba un cordial saludo.<br/><br/>Agencia de viajes Amadeus &copy; 2013.";
         
         if (enviarCorreo($nombre.' '.$apellidos,$email,'Confirmación registro en Viajes Amadeus',$contenido))
@@ -362,12 +362,13 @@ class Basedatos {
      * 
      * @return boolean true al terminar
      */
-    public function borrarFoto(){  
+    public function borrarFoto()
+    {  
         // El nick es el del usuario logueado.
         $nick = $_SESSION['usuario'];
         
          // Preparamos la instrucción SQL.
-        $stmt = self::$_mysqli->prepare("update amadeus_usuarios set fotografia=? where nick=?") or die(self::$_mysqli->error);
+        $stmt = self::$_mysqli->prepare("update amadeus_usuarios set fotografia='' where nick=?") or die(self::$_mysqli->error);
 
          // Enlazamos los parámetros.  (non se poden facer chamadas a funcions nin ¿variables?)
         $stmt->bind_param('s', $nick);
@@ -379,6 +380,30 @@ class Basedatos {
     }
    
     
+    public function borrarUsuario()
+    {
+        // El nick es el del usuario logueado.
+        $nick = $_SESSION['usuario'];
+        
+         // Preparamos la instrucción SQL.
+        $stmt = self::$_mysqli->prepare("delete from amadeus_usuarios where nick=?") or die(self::$_mysqli->error);
+
+         // Enlazamos los parámetros.  (non se poden facer chamadas a funcions nin ¿variables?)
+        $stmt->bind_param('s', $nick);
+        
+        // Ejecutamos la instrucción
+        $stmt->execute() or die(self::$_mysqli->error);
+        
+        if(isset($_SESSION['fotografia']) && $_SESSION['fotografia']!='')
+        {
+                $directorioImagenes=substr(__FILE__,0,strlen(__FILE__) - strlen(basename(__FILE__))-4).'img/usuarios/';  //-4 por /lib e chegar a raiz de amadeus
+                $rutaFicheroAvatar=$directorioImagenes.$_SESSION['fotografia'];
+            
+                //Borramos el fichero de imagen de usuario
+                unlink($rutaFicheroAvatar);
+        }
+         return 'OK';
+    }
     
 }
 ?>

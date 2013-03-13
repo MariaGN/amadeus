@@ -1,0 +1,11 @@
+RewriteEngine on
+#DirectoryIndex inicio.html
+Options -Indexes  
+# para que nos asome todo o directorio  
+
+RewriteRule ^(.*).html$  controlador.php?inc=$1 [QSA,L]  #engada os strings da query, L é para que non siga evaluando
+#. significa 1 caracter, * 1 ou mais veces
+# $1 correspondese a (.*)
+
+#^(.*)_(.*).html$ controlador.php?inc=$1 & contenido=$2
+# algo1_algo2.html   algo 1 corresponderiase co $1 e algo2 co $2

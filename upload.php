@@ -11,7 +11,7 @@ $formatosPermitidos=array('jpg','jpeg','gif','jpeg');
 if(isset($_SESSION['usuario']))
 {
     //si recibimos fichero.
-    if(!empty($_FILES))
+    if($_FILES['ficherosubido']['size']>0)
     {
         $partesFichero=pathinfo($_FILES['ficherosubido']['name']);
         //Comprobamos si es una extensión permitida
