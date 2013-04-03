@@ -405,5 +405,90 @@ class Basedatos {
          return 'OK';
     }
     
+    
+    
+    
+    
+    
+    public function obtenerAeropuertos($latNE = '', $lonNE = '', $latSW = '', $lonSW = '') {
+        if ($latNE != '') {
+            // Preparamos la consulta
+            $stmt = self::$_mysqli->prepare("select id,aeropuerto,ciudad,pais,iata,icao,latitud,longitud,elevacion from amadeus_aeropuertos where latitud<=? and latitud>=? and longitud<=? and longitud>=?") or die(self::$_mysqli->error);
+
+            $stmt->bind_param("dddd", $latNE, $latSW, $lonNE, $lonSW);
+        } else {
+            // Preparamos la consulta
+            $stmt = self::$_mysqli->prepare("select id,aeropuerto,ciudad,pais,iata,icao,latitud,longitud,elevacion from amadeus_aeropuertos") or die(self::$_mysqli->error);
+        }
+
+
+        // Ejecutamos la consulta
+        $stmt->execute();
+
+        // Almacenamos los resultados.
+        $stmt->bind_result($id, $aeropuerto, $ciudad, $pais, $iata, $icao, $latitud, $longitud, $elevacion);
+
+        // Creamos el array de resultados.
+        $datos = Array();
+
+        // Leemos las filas del recordset.
+        while ($fila = $stmt->fetch()) {
+            $datos[$id] = array("id" => $id, "aeropuerto" => $aeropuerto, "ciudad" => $ciudad, "pais" => $pais, "iata" => $iata, "icao" => $icao, "latitud" => $latitud, "longitud" => $longitud, "elevacion" => $elevacion);
+        }
+
+        // Liberamos espacio del recordset
+        $stmt->free_result();
+
+        // Devolvemos el array en formato JSON.
+        return json_encode($datos);
+
+        // Liberamos espacio
+    }
+
+    
+    
+       
+    public function sugerirAeropuertos($aeropuerto) {
+        
+         // Preparamos la consulta
+         $stmt = self::$_mysqli->prepare("select aeropuerto,ciudad,pais,iata,latitud,longitud from amadeus_aeropuertos where aeropuerto like ? order by aeropuerto limit 10 ") or die(self::$_mysqli->error);
+        
+         
+         $parametro="$aeropuerto%";
+         $stmt->bind_param("s",$parametro);
+         
+         
+        // Ejecutamos la consulta
+        $stmt->execute();
+
+        // Almacenamos los resultados.
+        $stmt->bind_result( $aeropuerto, $ciudad, $pais, $iata, $latitud, $longitud);
+
+        // Creamos el array de resultados.
+        $datos = Array();
+        
+        //inicializamos el contador del array
+        $contador=0;
+
+        // Leemos las filas del recordset.
+        while ($fila = $stmt->fetch()) {
+            $datos[$contador] = array( "aeropuerto" => $aeropuerto, "ciudad" => $ciudad, "pais" => $pais, "iata" => $iata,  "latitud" => $latitud, "longitud" => $longitud);
+        
+            $contador++;
+        }
+
+        // Liberamos espacio del recordset
+        $stmt->free_result();
+
+        // Devolvemos el array en formato JSON.
+        return json_encode($datos);
+
+        // Liberamos espacio
+    }
+    
+    
+    
+
+    
 }
 ?>

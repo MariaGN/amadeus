@@ -1,11 +1,14 @@
-function distancia(punto1, punto2)
+// ----------------------------------------------------------------------
+/**
+ * Se le pasan dos puntos del tipo LatLng(lat,lon)
+ */
+// ----------------------------------------------------------------------
+function distancia2(punto1, punto2)
 {
     lon1= punto1.lng().toString();
     lat1= punto1.lat().toString();
     lon2= punto2.lng().toString();
     lat2= punto2.lat().toString();
-
-              
      
     rad = function(x) {
         return x*Math.PI/180;
@@ -22,94 +25,223 @@ function distancia(punto1, punto2)
     return d.toFixed(3);                      //Retorna tres decimales
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  function toggleBounce(nombreMarcador)
+
+/**
+ * Se le pasan dos puntos del tipo LatLng(lat,lon)
+ */
+// ----------------------------------------------------------------------
+function distancia(punto1,punto2)
+{
+    // Para usar el cálculo de distancia de google maps.
+    // Ese necesario cargar la librería geometry
+    // http://maps.googleapis.com/maps/api/js?key=&sensor=false&libraries=geometry">
+    
+    return (google.maps.geometry.spherical.computeDistanceBetween(punto1,punto2)/1000).toFixed(2);
+}
+
+
+
+// ----------------------------------------------------------------------
+function toggleBounce(nombreMarcador)
+{
+    if (nombreMarcador.getAnimation() != null)
+        nombreMarcador.setAnimation(null);
+    else
+        nombreMarcador.setAnimation(google.maps.Animation.BOUNCE);
+}
+
+
+//------------------------------------------------------------------------
+function crearMarcador(posicion,titulo,informacion,tipo)
+{
+    // tipo: origen, destino, defecto
+    // Ruta de iconos de google maps.
+    // https://sites.google.com/site/gmapicons/home
+    switch(tipo)
     {
-       if (nombreMarcador.getAnimation() != null)
-            nombreMarcador.setAnimation(null);
-        else
-            nombreMarcador.setAnimation(google.maps.Animation.BOUNCE); 
-        
+        case 'origen':
+            icono='http://www.google.com/mapfiles/dd-start.png';
+            break;
+        case 'destino':
+            icono='http://www.google.com/mapfiles/dd-end.png';
+            break;
+        default:
+            icono='http://www.google.com/mapfiles/marker.png';
     }
     
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-function crearMarcador(posicion,titulo)
-{
     var marcador = new google.maps.Marker(
     {
         map: mapa,
         draggable: false,
         //animation: google.maps.Animation.DROP,
         position: posicion,
-        title: titulo
-    });
-    return marcador;    
+        title: titulo,
+        icon: icono,
+        shadow: icono
+    });   
+
+    crearInfo(informacion,marcador);
+
+    return marcador;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//------------------------------------------------------------------------
 function dibujarRuta(rutadepuntos)
 {
-    
-     var linea=  new google.maps.Polyline(
-   {
-       map:mapa,
-       path: rutadepuntos,
-       geodesic: true,
-       strokeColor: "FF0000", //cor da liña
-       strokeOpacity: 1.0,
-       strokeWeight: 2
-   });
-   return linea;
-   
-   //ou ben return=new google.maps.Polyline  sen reutrn ó final
+    return  new google.maps.Polyline(
+    {
+        map: mapa,
+        path: rutadepuntos,
+        geodesic: true,
+        strokeColor: "FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2      
+    });   
 }
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------
 function crearInfo(contenido,marcador)
 {
-    var ventana= new google.maps.InfoWindow(
+    var informacion= new google.maps.InfoWindow(
     {
-        maxWidth:120,
         content: contenido
     });
     
     google.maps.event.addListener(marcador,'click',function(){
-       ventana.open(mapa,marcador);        
+        informacion.open(mapa,marcador);
     });
-    
-    google.maps.event.addListener(marcador,'mouseover',function(){
-       ventana.open(mapa,marcador);        
+   
+/*
+   google.maps.event.addListener(marcador,'mouseout',function(){
+        informacion.close();
     });
-    
-      google.maps.event.addListener(marcador,'mouseout',function(){
-       ventana.close();        
-    });
-    
+     */ 
     
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//----------------------------------------------------------------------
 function puntoMedio(punto1,punto2)
 {
-    lon1=parseFloat(punto1.lng().toString()); //longitud do objeto
-    lat1=parseFloat(punto1.lng().toString());
+    lon1=parseFloat(punto1.lng().toString());
+    lat1=parseFloat(punto1.lat().toString());
+    lon2=parseFloat(punto2.lng().toString());
+    lat2=parseFloat(punto2.lat().toString());
     
-    lon2=parseFloat(punto1.lng().toString());
-    lat2=parseFloat(punto1.lng().toString());
+    latMedio=(lat1 + lat2)/2;
+    lonMedio=(lon1 + lon2)/2;
     
-    lonMedio=(lon1+lon2)/2;
-    latMedio=(lat1+lat2)/2;
-    
-    
-    return  new google.maps.LatLng(latMedio,lonMedio);
+    return new google.maps.LatLng(latMedio,lonMedio);
 }
 
 
 
+//----------------------------------------------------------------------
+function infoVuelo(origen,destino)
+{
+    // origen y destino son marcadores -> objetos de tipo Marker.
+    var velocidadAvion=850; // 850km/h de media de velocidad
+    var maniobras=20; // 20 minutos para despegue y aterrizaje.
+    
+    // Calculamos el tiempo en minutos para recorrer los dos puntos.
+    var tiempoMinutos= ( distancia(origen.getPosition(),destino.getPosition()) * 60 / velocidadAvion) + maniobras;
+    
+    horas = Math.floor(tiempoMinutos/60);
+    minutos = Math.round(tiempoMinutos%60);
+    
+    mensaje= origen.getTitle()+" --> "+destino.getTitle()+": <b>"+distancia(origen.getPosition(),destino.getPosition())+"</b> km.<br/>Duración: <b>"+horas+"</b> horas y <b>"+minutos+"</b> minutos.";
+    
+    
+    return mensaje;
+}
+
+
+
+//----------------------------------------------------------------------
+function cargarPuntos()
+{
+    // Averiguamos las coordenadas del zoom actual del mapa.
+    // Nos devuelve coordenadas superiorDerecha e inferiorIzquierda.
+    limitesMapa=mapa.getBounds();
+    
+    latNE=limitesMapa.getNorthEast().lat().toString();
+    lonNE=limitesMapa.getNorthEast().lng().toString();
+    latSW=limitesMapa.getSouthWest().lat().toString();
+    lonSW=limitesMapa.getSouthWest().lng().toString();
+        
+        
+    $.post("peticiones.php?op=7",{latNE:latNE,lonNE:lonNE,latSW:latSW,lonSW:lonSW},function(resultado)
+    {
+        // Evaluamos el objeto JSON recibido.
+        var aeropuertos=jQuery.parseJSON(resultado);
+           
+        // Recorremos el array recibido. Cada posición contiene un objeto con todas las propiedades que enviamos en la base de datos.
+        // Recorremos ese array de aeropuertos.
+        // En index tenemos el índice de cada posición del array y que es igual al id del aeropuerto, y en datos el objeto con los valores del aeropuerto.
+        $.each(aeropuertos,function(index,datos){
+                
+            // Comprobamos si ya hemos cargado previamente ese punto en el mapa.
+            // Si no está cargado lo creamos y lo anotamos en el array marcadores.
+            if (!marcadores[index]) // Si ese marcador no existe lo añadimos
+            {
+                var posicion= new google.maps.LatLng(datos.latitud,datos.longitud);
+                var titulo= datos.aeropuerto;
+                var informacion ='<div style="font-size:smaller; width:380px;height:150px"><h4>Aeropuerto: '+datos.icao+'</h4>'+
+                '<p><b>'+datos.aeropuerto+'</b>,<br/>Situado en la ciudad de <b>'+datos.ciudad+'</b> en <b>'+datos.pais+'.</b><br/>'+
+                'Coord.: ('+datos.latitud+','+datos.longitud+') --- Elevacion: '+datos.elevacion+' m.'+
+                '<br/>IATA: <b>'+datos.iata+'</b> --- ICAO: <b>'+datos.icao+'</b></div>';
+               
+                // Colocamos el marcador en el mapa.
+                var marcador= crearMarcador(posicion,titulo,informacion,'');
+
+                // Anotamos en el array marcadores (ponemos a true esa posición), el nuevo marcador colocado en el mapa.
+                marcadores[index]=true;
+            } 
+        }); // $.each
+    }); // $.post    
+}
+
+
+function geolocalizar()
+{
+    //Intenta primero localizar usando W3C
+    if(navigator.geolocation)
+        {
+            navegadorSoportaLoc=true;
+            navigator.geolocation.getCurrentPosition(function(posicion)
+            {
+                posicionInicial=new google.maps.LatLng(posicion.coords.latitude,posicion.coords.longitude);
+                mapa.setCenter(posicionInicial);
+                //crear marcador en la posicion inicail
+                crearMarcador(posicionInicial,'Estas aquí','Tus coordenadas: ('+posicion.coords.latitude+" , "+posicion.coords.longitude+")",'');
+            });
+        }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 $(document).ready(function()
 {
+    $("#infomapa").fadeTo(0,0);
+    
+    // Array para controlar los marcadores que vamos situando en el mapa.
+    marcadores=[];
+    
+    origen=null;
+    destino=null;
+    pOrigen=null;
+    pDestino=null;
+    linea=null;
+    
+    
     // Latitud NORTE(valores +) |ecuador| SUR(valores -)
     // Longitud OESTE(valores -) |Meridiano Greenwich| ESTE (valores +) 
     // Creamos dos puntos geográficos (latitud,longitud).
@@ -117,12 +249,13 @@ $(document).ready(function()
     var instituto = new google.maps.LatLng(42.878676, -8.547272);
     var nyork = new google.maps.LatLng(40.7143528,-74.0059731);
     var miami = new google.maps.LatLng(25.7889689,-80.2264393);
-	
+    
+    
     // Definimos las opciones de mapa en un objeto de tipo MapOptions
     // https://developers.google.com/maps/documentation/javascript/reference#MapOptions
     var opcionesMapa ={
         center: instituto,
-        zoom: 17,
+        zoom: 3,
         mapTypeId: google.maps.MapTypeId.ROADMAP    
     };
     
@@ -139,58 +272,165 @@ $(document).ready(function()
     mapa = new google.maps.Map($("#mimapa")[0],opcionesMapa);
     
     
-    // Creamos un objeto de tipo Market en el instituto.
-    var marcaInstituto = crearMarcador(instituto,'IES San Clemente');
-    var marcaMadrid = crearMarcador(madrid,'Madrid');
     
-    /* var marcaMadrid = new google.maps.Marker(
-    {
-        map: mapa,
-        draggable: false,
-        animation: google.maps.Animation.DROP,
-        position: madrid,
-        title: 'Madrid' 
-    }); así serí a sen a función*/
+    // Creamos dos marcas.
+   // var mMadrid = crearMarcador(madrid,'Madrid','Capital de España','origen');
+   // var mNyork = crearMarcador(nyork,'Nueva York','Bonita ciudad','destino');
     
-    crearInfo('Madrid, capital de España',marcaMadrid);
+    // Ejemplo de crearInfo:
+    //crearInfo('Madrid capital de España',marcaMadrid);
     
-    mapa.setZoom(6);
-       
-       
-  
-
+    // Cambiamos el zoom del mapa.
+    // mapa.setZoom(3);
 
     // Programamos que al hacer click en el marcador
     // del instituto haga una animación.
-    google.maps.event.addListener(marcaInstituto,'click',function(){
-       toggleBounce(marcaInstituto);        
+    // google.maps.event.addListener(marcaInstituto,'click',function(){
+    //    toggleBounce(marcaInstituto);
+    //    });
+    
+    // Dibujamos una linea entre Instituto y Madrid.
+   // var linea = dibujarRuta([madrid,nyork]);
+    
+    // Centramos el mapa en el punto medio entre el instituto y Madrid.
+    mapa.setCenter(puntoMedio(madrid,nyork));
+    
+  
+    // Programamos la acción de click sobre el botón #info.
+    $("#info").click(function()
+    {
+        // Ponemos el contenido en infomapa.
+        $("#infomapa").html(infoVuelo(origen,destino));
+       
+        $("#infomapa").stop().fadeTo(800,1,function()
+        {
+            $(this).delay(2000).fadeTo(600,0);
+        });
     });
-    
-    
-   //Dibujamos una linea entre instituto y madrid, 1º creamola
-/*   var linea=  new google.maps.Polyline(
-   {
-      // map:mapa, //se comentamos non nos mostra a liña, outra forma de vela sería con nome_variable_da_poliline.setMap(nomedamapa)
-       path: [instituto, madrid],
-       geodesic: true,
-       strokeColor: "FF0000", //cor da liña
-       strokeOpacity: 1.0,
-       strokeWeight: 2
-   });*/
-   
-   //creada a función dibujar ruta
-   var linea=dibujarRuta([instituto,madrid]);
-   
-   mapa.setCenter(puntoMedio(instituto,madrid));
-   
-   
-    linea.setMap(mapa);
-    //para OCULTAR a liña
-    //linea.setVisible(false);
-    ///para SACAR a liña
-    //linea.setMapa(null);
-    
-    mensaje="<p> La distancia entre el Instituto y Madrid es de "+distancia(instituto,madrid)+" Km.</p>"
-    $('#opciones').html(mensaje);
-   //asi sería con javascript document.getElementById("opciones").innerHTML=mensaje;
+  
+  
+    // Al hacer click en el botón aeropuertos, cargamos los puntos de los aeropuertos.
+    $("#aeropuertos").click(function()
+    {
+        cargarPuntos();
+    }); // click aeropuertos.
+  
+  $("#origen,#destino").keyup(function(){
+       //Averiguamos el nombre del objeto donde estamos escribiendo
+       casillaclick=$(this).attr('id');
+     $.post("peticiones.php?op=8",{aeropuerto:$(this).val()},
+        function(datos){
+                         //convierte a objeto de Javascript el JSON recibido desde PHP
+                         aeropuertos=jQuery.parseJSON(datos);
+                         listado='';
+                         
+                         //recorremos el array
+                         $.each(aeropuertos,function(index,valor){
+                             //en index, tenemos del 0 al 10 como máximo
+                             //en valor tenemos el obketo con todas sus propiedades
+                             listado+="<li>"+valor.aeropuerto+", "+valor.ciudad+"- "+valor.pais+"( "+valor.iata+" )</li>";
+                         });
+                         
+                         if(aeropuertos.length != 0)
+                             $("#zonasugerencias").addClass("zonaconborde");
+                         else
+                             $("#zonasugerencias").removeClass("zonaconborde");
+                         
+                         //metemos en el contenedor el listado generado con <li>...
+                          $("#zonasugerencias").html(listado);
+                          
+                         $("#zonasugerencias li").each(function(){
+                             $(this).mouseover(function(){
+                                $(this).addClass("enlace_sugerencia_over"); 
+                             });
+                             
+                              $(this).mouseout(function(){
+                                $(this).removeClass("enlace_sugerencia_over"); 
+                             });
+                             
+                     
+                             
+                             //para meter o aeroporto seleccionado no orixe (dereita)
+                              $(this).click(function(){
+                                $("#origen"+casillaclick).val($(this).text()); 
+                                
+                                //necesitamos averiguar a posicion onde fixemos click para poder ir o array aeroportos e colle os datos de lat e long de ese aeroporto
+                                //$(this).parent().children().index($(this));
+                                posiciondeclick=$(this).parent().children().index($(this));
+                                
+                                
+                                if(casillaclick=='origen'){
+                                
+                                        //dibujamos el pto de origen
+                                        pOrigen=new google.maps.LatLng(aeropuertos[posiciondeclick].latitud,aeropuertos[posiciondeclick].longitud);
+
+                                       if(origen !=null)
+                                           origen.setMap(null);
+
+
+                                       origen=crearMarcador(pOrigen,aeropuertos[posiciondeclick].ciudad,aeropuertos[posiciondeclick].ciudad+" - "+aeropuertos[posiciondeclick].pais+" ( "+aeropuertos[posiciondeclick].iata+" )",'origen');
+
+                                        //Que coloque el centro del mapa en este pto
+                                                   mapa.setCenter(pOrigen);
+
+                                        //que ponga zoom del mapa a 4
+                                                    mapa.setZoom(4);
+                                }//fin sasillaclick=origen       
+                                
+                                else //es pto destino
+                                {
+                                         //dibujamos el pto de origen
+                                        pDestino=new google.maps.LatLng(aeropuertos[posiciondeclick].latitud,aeropuertos[posiciondeclick].longitud);
+
+                                       if(destino !=null)
+                                           destino.setMap(null);
+
+
+                                       destino=crearMarcador(pDestino,aeropuertos[posiciondeclick].ciudad,aeropuertos[posiciondeclick].ciudad+" - "+aeropuertos[posiciondeclick].pais+" ( "+aeropuertos[posiciondeclick].iata+" )",'destino');
+
+                                        //Que coloque el centro del mapa en este pto
+                                                   mapa.setCenter(pDestino);
+
+                                        //que ponga zoom del mapa a 4
+                                                    mapa.setZoom(4);
+                                }  
+                                  
+                                 //si tenemos origen y destino, dibujamos la ruta
+                                 //y cubrimos la información del vuelo
+                                 if (origen !=null && destino !=null)
+                                     {
+                                         if (linea != null)
+                                             {
+                                                 linea.setMap(null);
+                                             }
+                                         linea=dibujarRuta([pOrigen,pDestino]);  
+                                         mapa.setCenter(puntoMedio(pOrigen,pDestino));
+                                         // $("#infomapa").html(infoVuelo(origen,destino)); //xa esta programado arriba
+                                                
+                                                
+                                         //ajustamos el zoom para que entre la ruta en el mapa
+                                         var misLimites= new google.maps.LatLngBounds();
+                                         misLimites.extend(pOrigen);
+                                         misLimites.extend(pDestino);
+                                         mapa.fitBounds(misLimites);
+                                       
+                                     }
+                                  
+                                  
+                                //Ocultamos el div de sugerencias
+                                            $("#zonasugerencias").removeClass("zonaconborde").html("");
+                                
+                             });
+                         });//function sobre lista
+                         
+                    }); //function (datos)
+  });
+  
+  //    $("#geolocalizar").click(geolocalizar);  //equivale as liñas seguintes
+  
+  $("#geolocalizar").click(function()
+    {
+        geolocalizar();
+    });
+  
 });  // document.ready.
