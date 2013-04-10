@@ -51,5 +51,8 @@ switch($_GET['op']){
     case 8: //Peticion ajax de sugerencias de aeropuertos
         echo $mibase->sugerirAeropuertos($_POST['aeropuerto']);
         break;
+    case 9: //Peticion a Flightradar24.com
+        echo file_get_contents("http://www.flightradar24.com/AirportInfoService.php?airport={$_POST['iata']}&type={$_POST['tipo']}");
+        break;
 }
 ?>

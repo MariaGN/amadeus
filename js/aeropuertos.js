@@ -221,6 +221,85 @@ function geolocalizar()
                 crearMarcador(posicionInicial,'Estas aquí','Tus coordenadas: ('+posicion.coords.latitude+" , "+posicion.coords.longitude+")",'');
             });
         }
+     else //Tu navegador no soporta localizacion
+         {
+            alert("Fallo  en Localización.");
+            //situamos al usuario en Madrid por ejemplo
+            mapa.setCenter(madrid);
+         }
+}
+
+
+function vuelosTiempoReal(desde,tipo)
+{
+    //desde puede contener el valor origen o destino
+    //tipo puede contener el valor salidas o llegadas
+    codigoIATA=null;
+    
+    if(tipo=='salidas')
+        formato='out';
+    else
+        formato='in';
+    
+    //tipo=='salidas'?'out':'in';
+    
+    
+    if(desde=='origen' && $("#origen").val()!='')
+        codigoIATA=iataOrigen;
+    else if (desde=='destino' && $("#destino").val()!='')
+         codigoIATA=iataDestino;
+    if(codigoIATA !=null)//hacemos la peticion ajax a Flightrada24.com
+        {
+            $.post("peticiones.php?op=9",{iata:codigoIATA,tipo:formato},function(resultado)
+            {
+                //En resultado tenemos el objeto JSON recibido de flightradar24.com
+                vuelos=jQuery.parseJSON(resultado);
+                
+                if(tipo=='llegadas')
+                    {
+                        //generamos el contenido de la tabla de llegadas
+                        listado="<h3>Llegadas previstas al aeropuerto"+codigoIATA+".</h3><img src='img/css/icons/error.png' id='cruz'/>";
+                        listado+="<table border=1><thead><th>Callsign</th><th>Vuelo</th><th>Procedencia</th><th>Tipo</th><th>Tiempo Estimado LLegada</th></thead>";
+                        
+                        //recorremos el objeto JSON.
+                        $.each(vuelos.flights,function(index,valores)
+                            {
+                                tiempoEstimado=new Date((vuelos.flights[index].eta)*1000);
+                                listado+="<tr align='center'><td>"+vuelos.flights[index].callsign+"</td>";
+                                listado+="<td>"+vuelos.flights[index].flight+"</td>";
+                                listado+="<td>"+vuelos.flights[index].name+"</td>";
+                                listado+="<td>"+vuelos.flights[index].type+"</td>";
+                                listado+="<td>"+tiempoEstimado.getHours()+":"+tiempoEstimado.getMinutes()+"</td></tr>";
+                            });
+                       listado+="</table>";
+                       
+                       $("#infovuelos").html(listado).fadeTo(1,1);
+                    }
+                else //cubrimos la tabla de salidas
+                    {
+                        //generamos el contenido de la tabla de llegadas
+                        listado="<h3>Salidas previstas al aeropuerto"+codigoIATA+".</h3><img src='img/css/icons/error.png' id='cruz'/>";
+                        listado+="<table border=1><thead><th>Callsign</th><th>Vuelo</th><th>Procedencia</th><th>Tipo</th></thead>";
+                        
+                        //recorremos el objeto JSON.
+                        $.each(vuelos.flights,function(index,valores)
+                            {
+                                tiempoEstimado=new Date((vuelos.flights[index].eta)*1000);
+                                listado+="<tr align='center'><td>"+vuelos.flights[index].callsign+"</td>";
+                                listado+="<td>"+vuelos.flights[index].flight+"</td>";
+                                listado+="<td>"+vuelos.flights[index].name+"</td>";
+                                listado+="<td>"+vuelos.flights[index].type+"</td></tr>";
+                                
+                            });
+                       listado+="</table>";
+                       
+                       $("#infovuelos").html(listado).fadeTo(1,1);
+                    }
+            });
+        }
+    else
+        alert("Tiene que seleccionar algún aeropuerto en las casillas de origen o destino");
+  
 }
 
 
@@ -231,6 +310,7 @@ function geolocalizar()
 $(document).ready(function()
 {
     $("#infomapa").fadeTo(0,0);
+    $("#infovuelos").hide();
     
     // Array para controlar los marcadores que vamos situando en el mapa.
     marcadores=[];
@@ -240,6 +320,8 @@ $(document).ready(function()
     pOrigen=null;
     pDestino=null;
     linea=null;
+    iataOrigen=null;
+    iataDestino=null;
     
     
     // Latitud NORTE(valores +) |ecuador| SUR(valores -)
@@ -352,14 +434,15 @@ $(document).ready(function()
                              
                              //para meter o aeroporto seleccionado no orixe (dereita)
                               $(this).click(function(){
-                                $("#origen"+casillaclick).val($(this).text()); 
+                                $("#"+casillaclick).val($(this).text()); 
                                 
                                 //necesitamos averiguar a posicion onde fixemos click para poder ir o array aeroportos e colle os datos de lat e long de ese aeroporto
                                 //$(this).parent().children().index($(this));
                                 posiciondeclick=$(this).parent().children().index($(this));
                                 
                                 
-                                if(casillaclick=='origen'){
+                                if(casillaclick=='origen')
+                                {
                                 
                                         //dibujamos el pto de origen
                                         pOrigen=new google.maps.LatLng(aeropuertos[posiciondeclick].latitud,aeropuertos[posiciondeclick].longitud);
@@ -375,6 +458,9 @@ $(document).ready(function()
 
                                         //que ponga zoom del mapa a 4
                                                     mapa.setZoom(4);
+                                                    
+                                       //almacenar aeroporto orixe             
+                                                    iataOrigen=aeropuertos[posiciondeclick].iata;
                                 }//fin sasillaclick=origen       
                                 
                                 else //es pto destino
@@ -393,6 +479,8 @@ $(document).ready(function()
 
                                         //que ponga zoom del mapa a 4
                                                     mapa.setZoom(4);
+                                                    
+                                                    iataDestino=aeropuertos[posiciondeclick].iata;
                                 }  
                                   
                                  //si tenemos origen y destino, dibujamos la ruta
@@ -431,6 +519,13 @@ $(document).ready(function()
   $("#geolocalizar").click(function()
     {
         geolocalizar();
+    });
+    
+    
+  $("#vuelos").click(function()
+    {
+        //necesitamos pasarle, desde ("origen", "destino") o tipo("salidas","llegadas")
+        vuelosTiempoReal($("input[name=desde]:checked").val(),$("input[name=tipo]:checked").val());
     });
   
 });  // document.ready.
