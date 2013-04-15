@@ -58,5 +58,9 @@ switch ($_GET['op']) {
     case 10: // Consultas RSS
         $mirss=new rss($_POST['titulo'],$_POST['url']);
         echo $mirss->contenidoRSS();
+        
+    case 11: //Peticion JSON a wunderground.com
+        echo file_get_contents ("http://api.wunderground.com/api/9818492157481090/conditions/forecast/lang:SP/q/Spain/{$_POST['localidad']}.json");
+        break;
 }
 ?>
