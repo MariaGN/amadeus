@@ -60,7 +60,7 @@ switch ($_GET['op']) {
         echo $mirss->contenidoRSS();
         
     case 11: //Peticion JSON a wunderground.com
-        echo file_get_contents ("http://api.wunderground.com/api/9818492157481090/conditions/forecast/lang:SP/q/Spain/{$_POST['localidad']}.json");
+        echo file_get_contents ("http://api.wunderground.com/api/9818492157481090/conditions/forecast/lang:SP/q/{$_POST['pais']}/{$_POST['localidad']}.json");
         break;
 }
 ?>
