@@ -1,9 +1,4 @@
 $(document).ready(function(){
-
-
-
-
-  
         $("#origen").keyup(function()
         {
             // Averiguamos el nombre del objeto dónde estamos escribiendo.
@@ -58,49 +53,31 @@ $(document).ready(function(){
                         // Ocultamos el div de sugerencias
                         $("#zonasugerencias").removeClass("zonaconborde").html("");
                         
+                        $("#tiempo").html("<img src='img/tiempo.gif'/>");
 
 
-
-                        $.post("peticiones.php?op=11",{pais:aeropuertos[posiciondeclick].pais,localidad:aeropuertos[posiciondeclick].ciudad}, function(resultado)
+                        $.post("peticiones.php?op=11",{pais:aeropuertos[posiciondeclick].pais.replace(/ /gi,'_'),localidad:aeropuertos[posiciondeclick].ciudad.replace(/ /gi,'_')}, function(resultado)
                                {
-
-                                       var tiempo=jQuery.parseJSON(resultado);
-
-                                       if('error' in tiempo.response)
+                                       var tempo=jQuery.parseJSON(resultado);
+                                       if('error' in tempo.response)
                                        {          
-                                           $("#botontiempo").html('No existe la localidad');
+                                           $("#tiempo").html('No existe predicción para la localidad solicitada');
                                        }
-
                                        else
                                        {    
-
-                                           $("#botontiempo").html(tiempo.current_observation.weather);
-
-
-                                           listado="<h3 >Tiempo.</h3>";
+                                           $("#tiempo").html(tempo.current_observation.weather);
+                                           listado="<h3 >Tiempo previsto para "+$("#origen").val().substr(val(),0,length-5)+"</h3>";
                                            listado+="<table border='1'><thead><th>DIA</th><th>PREVISION</th><th>TEMPERATURA</th></thead>"; 
-                                                    $.each(tiempo.forecast.simpleforecast.forecastday, function(index, valores)
+                                                    $.each(tempo.forecast.simpleforecast.forecastday, function(index, valores)
                                                     {
-                                                        listado+="<tr align='center'><td>"+tiempo.forecast.simpleforecast.forecastday[index].date.pretty+"</td><td>"+tiempo.forecast.simpleforecast.forecastday[index].conditions+"</td><td>Max:"+tiempo.forecast.simpleforecast.forecastday[index].high.celsius+", Min:"+tiempo.forecast.simpleforecast.forecastday[index].low.celsius+"</td></tr>";
+                                                        listado+="<tr align='center'><td>"+tempo.forecast.simpleforecast.forecastday[index].date.pretty+"</td><td>"+tempo.forecast.simpleforecast.forecastday[index].conditions+"</td><td>Max:"+tempo.forecast.simpleforecast.forecastday[index].high.celsius+", Min:"+tempo.forecast.simpleforecast.forecastday[index].low.celsius+"</td></tr>";
                                                     });
                                             listado+="</table>";
-
-
-                                           $("#botontiempo").html(listado);        
-
+                                           $("#tiempo").html(listado);  
+                                           $("#origen").val('');
                                        }  
-
                                });
-
-    
-    
-    
-    
-    
-    
-    
-                        
-                        
+   
                         
                     });
 
@@ -109,32 +86,9 @@ $(document).ready(function(){
             });
 
         });
-    
-    
-    
-    
-
-       
-   
-   
-   
-   
-   
-   
+        
+        
 });
 
 
 
-
-//Esto non porque seria a peticion directa a wunderground
-//$(document).ready(function($) {
- //   $.ajax({ 
-  //      url : "http://api.wunderground.com/api/9818492157481090/geolookup/q/SCQ.json",
-  //          dataType : "jsonp", 
-   //         success : function(parsed_json) 
-    //            { var location = parsed_json['location']['city'];
-    //                var temp_f = parsed_json['current_observation']['temp_f'];
-     //               alert("Current temperature in " + location + " is: " + temp_f);
-      //          } 
-     //       }); 
-       // });
