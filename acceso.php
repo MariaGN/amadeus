@@ -26,7 +26,7 @@ require_once ('lib/config.php');
 <p class="bottom">
 Si usted tiene cuenta de usuario local o a través de LDAP, utilice el formulario de la derecha, seleccionando el modo de Autenticación deseado.<br/><br/>Si desea acceder con su cuenta de Twitter utilice el botón inferior.
 </p>
-<img src='img/twitter2.png'/>
+<a href="logintwitter.php"><img src='img/twitter2.png'/></a>
 </div>
 </div>
 

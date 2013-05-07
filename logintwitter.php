@@ -34,5 +34,34 @@ else //tenemos access token disponible
     $twitter=new TwitterOAuth(Config::$consumerKey,Config::$consumerSecret,$_SESSION['access_token'],$_SESSION['access_token_secret']);
 
 
+    //conseguimos las credenciales/datos del usuario de twitter
+    $informacion=$twitter->get('account/verify_credentials');
+   /* highlight_string('<?php'.print_r($informacion,TRUE).'?>'); */
+
+    //almacenamos en variables de sesion los datos del usuario obtenidos de twitter
+    $_SESSION['usuario']=$informacion->id;
+    $_SESSION['nombre']=$informacion->name;
+    $_SESSION['apellidos']='';
+    $_SESSION['twitter']=true; //para modificar el menú
+
+    //almacenamos los datos del usuario en la base de datos
+    $mibase=Basedatos::getInstancia();
+
+    //comprobamos si el usuario ya estaba registrado o no
+    if($mibase->chequearNick($informacion->id,'twitter')=='Nick disponible')
+    {
+        echo 'hola';
+        //el usuario no estaba registrado
+        //lo insertamos en la base de datos
+        $mibase->insertarUsuario($informacion->id,'',$informacion->name,'','','','','twitter',$_SESSION['access_token'],$_SESSION['access_token_secret']);
+
+
+
+
+
+    }
+
+    // redireccionamos a la pagina index.html
+    header('Location:index.html');
 }
 ?>
