@@ -80,37 +80,41 @@ switch ($_GET['op'])
         {
             case 'misdatos':
                 $informacion = $twitter->get('account/verify_credentials');
-                print_r('<h4>Id del usuario: ' . $informacion->id . '</h4><h4>Nombre: ' . $informacion->name . '</h4><h4>Twitter: ' . $informacion->description . '</h4>');
-                //echo '<h4>Nombre: '.$informacion->name.'</h4>';
-                //echo '<h4>Twitter: '.$informacion->description.'</h4>';
+                print_r('<h4>Id del usuario: ' . $informacion->id . '</h4><h4>Nombre: ' . $informacion->name . '</h4>');
+
 
                 break;
             case "status":
                 $informacion = $twitter->get('statuses/home_timeline');
                 echo '<h4>Creado el: </h4>' . $informacion[0]->created_at . '<h4>Usuario: </h4>' . $informacion[0]->user->name . '<h4>Ultimo Twiteo: </h4>' . $informacion[0]->text;
-                //echo '<h4>Usuario: </h4>'.$informacion[0]->user->name;
-                //echo '<h4>Ultimo Twiteo: </h4>'.$informacion[0]->text;
 
                 break;
 
             case "timeline":
-                $informacion = $twitter->get('statuses/user_timeline', array('screen_name' => '@el_pais'));
-
-                if (empty($informacion))
-                    echo "Usuario no tiene twittes.";
-                else 
+                $informacion = $twitter->get('statuses/user_timeline', array('screen_name' => '@mari_lesende'));
+                if(isset($informacion->errors))
+                {
+                    echo('El usuario no existe');
+                }
+                else if(isset($informacion->error))
+                {
+                    echo('No tiene permisos para twittear');
+                }
+                else if (empty($informacion))
+                {
+                    echo "El usuario no tiene twittes.";
+                }
+                else
                 {
                     echo '<h4>Nombre de usuario: </h4>' . $informacion[0]->user->name . '<h4>Localización: </h4>' . $informacion[0]->user->location;
 
 
                     for ($i = 0; $i < count($informacion); $i++)
                     {
-                        if (isset($informacion[$i]->text))
+                        //if (isset($informacion[$i]->text))
                             echo '<h4>Twitters: </h4>' . $informacion[$i]->text . '<h4>Total retwiteos: </h4>' . $informacion[$i]->retweet_count;
                     }
-                    //echo '<h4>Localización: </h4>'.$informacion[0]->user->location;
-                    //echo '<h4>Ultimo Twiteo: </h4>'.$informacion[0]->text;
-                    //echo '<h4>Total retwiteos: </h4>'.$informacion[0]->retweet_count;
+
                 }
                 break;
 
@@ -119,7 +123,7 @@ switch ($_GET['op'])
                 //$mensaje=array('status'=>$texto);
                 $informacion = $twitter->post('statuses/update', array('status' => $texto));
 
-                echo $informacion->user->name;
+                echo $texto;
 
                 break;
         }
