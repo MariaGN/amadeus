@@ -1,4 +1,5 @@
 <script type="text/javascript" src="js/editarusuario.js"></script>
+<script type="text/javascript" src="js/pdf.js"></script>
 
 <style type="text/css">
     #mensajes{
@@ -23,40 +24,72 @@
                     <li><a href="editarusuario.html" />Modifique sus datos personales</a></li>
                     <li><a href="subirfoto.html" />Subir Fotografía</a></li>
                     <?php
-                    if(isset($_SESSION['fotografia'])&& $_SESSION['fotografia']!='')
-                        echo '<li><a href="borrarfoto.php"/>Borrar fotografía</a></li>';
+                    if (isset($_SESSION['fotografia']) && $_SESSION['fotografia'] != '')
+                        echo '<li><a href="borrarfoto.php" />Borrar Fotografía</a></li>';
                     ?>
-                    <li><a href="bajausuario.html" id="bajausuario" />Darse de Baja</a></li>
+                    <li><a href="generarpdf.php" id="imprimircarnet" />Imprimir/Enviar Carnet Socio</a></li>
+                    <li><a href="#" id="bajausuario" />Darse de Baja</a></li>
                 </ul>
                 </p>
             </div>
         </div>
 
         <div class="grid-6 grid">
-            <h3>Fotografía de su perfil</h3>
+            <?php
+                if (isset($_SESSION['twitter']))
+                    echo '<h3>Fotografía en Twitter.</h3>';
+                else
+                    echo '<h3>Fotografía de su perfil</h3>';
+            ?>
+
             <div id="mensajes"></div>
-            <!-- distinto nome e id de formulario por ter en editarusuario a funcion de -->
-            <form action="upload.php" name="formulario1" id="formulario1" method="post" enctype="multipart/form-data">
-                <p>
-                    <input type="file" name="ficherosubido" name="ficherosubido" /><br/> Exensiones: jpg, jpeg, gif, png.
-                    
+            <?php
+            if (!isset($_SESSION['twitter']))
+            {
+            ?>
+
+            <form action="upload.php" name="form1" id="form1" method="post" enctype="multipart/form-data">
+                <p><input type="file" name="ficherosubido" id="ficherosubido" /><br/>
+                    Extensiones: jpg, jpeg, gif, png.
                 </p>
 
                 <p>
                     <input type="reset" value="Limpiar" class="float_right">
-                    <input type="submit" value="Modificar" class="float_right" />
+                    <input type="submit" value="Subir Fotografia" class="float_right" />
                 </p>
             </form>
+            <?php
+            }
+            else
+            {
+
+            }
+            ?>
+
 
         </div><!--end of grid-6-->
+
         <div class="grid-4 grid">
             <?php
-                if(isset($_SESSION['fotografia'])&& $_SESSION['fotografia']!='')
-                    echo "<img src='img/usuarios/{$_SESSION['fotografia']}'";
+            if (isset($_SESSION['twitter']))
+            {
+                // Mostramos la imagen de twitter.
+                // Cargamos la librería twitterOAuth
+                 echo "<img src='{$_SESSION['fototwitter']}' width='50'/>";
+            }
+
+            else if (isset($_SESSION['fotografia']) && $_SESSION['fotografia'] != '')
+                    echo "<img src='img/usuarios/{$_SESSION['fotografia']}' width='250'/>";
                 else
-                    echo "Foto avatar no disponible";
+                    echo "Foto avatar no disponible.";
             ?>
+
         </div>
+
+
+
+
+
     </div><!--end of grids-->
 
 </div>

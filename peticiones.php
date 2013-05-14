@@ -16,8 +16,7 @@ require_once("lib/rss.php");
 // el constructor es privado en la clase Basedatos.
 $mibase = Basedatos::getInstancia();
 
-switch ($_GET['op'])
-{
+switch ($_GET['op']) {
     case 1:  // Chequear nick
         echo $mibase->chequearNick($_POST['nick']);
         break;
@@ -28,9 +27,8 @@ switch ($_GET['op'])
         break;
 
     case 3: // Chequear Inicio sesión
-        echo $mibase->chequearAcceso($_POST['nick'], $_POST['password']);
+        echo $mibase->chequearAcceso($_POST['nick'], $_POST['password'],$_POST['autenticacion']);
         break;
-
 
     case 4: // Obtener los datos del usuario
         echo $mibase->obtenerInfoUsuario();
@@ -59,73 +57,109 @@ switch ($_GET['op'])
     case 10: // Consultas RSS
         $mirss = new rss($_POST['titulo'], $_POST['url']);
         echo $mirss->contenidoRSS();
-
-    case 11: //Peticion JSON a wunderground.com
-        echo file_get_contents("http://api.wunderground.com/api/9818492157481090/conditions/forecast/lang:SP/q/{$_POST['pais']}/{$_POST['localidad']}.json");
         break;
 
-    case 12: //Peticion JSON a dev.twitter.com
-        include_once 'lib/twitter/twitteroauth.php';
-        $twitter = new TwitterOAuth(Config::$consumerKey, Config::$consumerSecret, $_SESSION['access_token'], $_SESSION['access_token_secret']);
+    case 11: // Tiempo JSON wunderground.com
+        echo file_get_contents("http://api.wunderground.com/api/".Config::$keywunderground."/conditions/forecast/lang:SP/q/" . str_replace(' ', '_', $_POST['pais']) . "/" . str_replace(' ', '_', $_POST['localidad']) . ".json");
+        break;
 
+    case 12: //Mis datos de twitter
+        // Cargamos la librería twitterOAuth
+        require_once 'lib/twitter/twitteroauth.php';
 
-
-
-
-
-
-
-
-        switch ($_POST['opcion'])
+        $twitter = new TwitterOauth(Config::$consumerKey, Config::$consumerSecret, $_SESSION['access_token'], $_SESSION['access_token_secret']);
+        switch ($_POST['boton'])
         {
             case 'misdatos':
-                $informacion = $twitter->get('account/verify_credentials');
-                print_r('<h4>Id del usuario: ' . $informacion->id . '</h4><h4>Nombre: ' . $informacion->name . '</h4>');
+                $misdatos = $twitter->get('account/verify_credentials');
 
+                $nombre = $misdatos->name;
+                $cuenta = $misdatos->screen_name;
+                $fotografia = $misdatos->profile_image_url;
+                $descripcion = $misdatos->description;
+                $seguidores = $misdatos->followers_count;
+                $siguiendo = $misdatos->friends_count;
+                $num_tweets = $misdatos->statuses_count;
 
+                $contenido = "<table padding='0'>";
+                $contenido.="<tr><td><b>Nombre:</b> </td><td>" . $nombre . "</td></tr>";
+                $contenido.="<tr><td><b>Username: </b></td><td>" . $cuenta . "</td></tr>";
+                $contenido.="<tr><td><b>Foto Perfil: </b></td><td><img src='" . $fotografia . "'/></td></tr>";
+                $contenido.="<tr><td><b>Descripción: </b></td><td>" . $descripcion . "</td></tr>";
+                $contenido.="<tr><td><b>Tweets: </b></td><td>" . $num_tweets . "</td></tr>";
+                $contenido.="<tr><td><b>Seguidores: </b></td><td>" . $seguidores . "</td></tr>";
+                $contenido.="<tr><td><b>Siguiendo: </b></td><td>" . $siguiendo . "</td></tr>";
+                $contenido.="</table>";
+
+                echo $contenido;
                 break;
-            case "status":
-                $informacion = $twitter->get('statuses/home_timeline');
-                echo '<h4>Creado el: </h4>' . $informacion[0]->created_at . '<h4>Usuario: </h4>' . $informacion[0]->user->name . '<h4>Ultimo Twiteo: </h4>' . $informacion[0]->text;
 
+            case 'status':
+                $status = $twitter->get('statuses/home_timeline');
+                $contenido = '';
+                for ($i = 0; $i < 16; $i++)
+                {
+                    $usuario = "<h5>" . $status[$i]->user->screen_name . "</h5>";
+                    $fecha = "<font color='#21610B'>" . $status[$i]->created_at . "</font>";
+                    $tweet = "<p>" . $status[$i]->text . "</p>";
+                    $imagen = "<img src='" . $status[$i]->user->profile_image_url . "' />";
+                    $contenido.="<div class='tweetstatus'>";
+                    $contenido.="<div class='imgstatus'>" . $imagen;
+                    $contenido.="</div>";
+                    $contenido.="<div class='cuerpotweet'>";
+                    $contenido.=$usuario;
+                    $contenido.=$fecha;
+                    $contenido.=$tweet;
+                    $contenido.="</div></div>";
+                }
+                echo $contenido;
                 break;
 
-            case "timeline":
-                $informacion = $twitter->get('statuses/user_timeline', array('screen_name' => '@mari_lesende'));
-                if(isset($informacion->errors))
+            case 'timeline':
+                $timeline = $twitter->get('statuses/user_timeline', array('screen_name' => $_POST['informacion']));
+                $contenido = '';
+                if (isset($timeline->error) && $timeline->error == "Not authorized")
                 {
-                    echo('El usuario no existe');
+                    $contenido.="Usuario protegido.";
                 }
-                else if(isset($informacion->error))
+                else if (isset($timeline->errors[0]->code) && $timeline->errors[0]->code == "34")
                 {
-                    echo('No tiene permisos para twittear');
+                    $contenido.="El usuario que ha introducido no existe.";
                 }
-                else if (empty($informacion))
+                else if (isset($timeline[0]->user->screen_name))
                 {
-                    echo "El usuario no tiene twittes.";
+
+                    for ($i = 0; $i < count($timeline); $i++)
+                    {
+                        if (!empty($timeline[$i]->user->screen_name))
+                        {
+                            $usuario = "<h5>" . $timeline[$i]->user->screen_name . "</h5>";
+                            $fecha = "<font color='#21610B'>" . $timeline[$i]->created_at . "</font>";
+                            $tweet = "<p>" . $timeline[$i]->text . "</p>";
+                            $imagen = "<img src='" . $timeline[$i]->user->profile_image_url . "'/>";
+                            $contenido.="<div class='tweetstatus'>";
+                            $contenido.="<div class='imgstatus'>" . $imagen."</div>";
+                            $contenido.="<div class='cuerpotweet'>";
+                            $contenido.=$usuario;
+                            $contenido.=$fecha . "<br/>";
+                            $contenido.=$tweet;
+                            $contenido.="</div></div>";
+
+                        }
+                    }
                 }
                 else
                 {
-                    echo '<h4>Nombre de usuario: </h4>' . $informacion[0]->user->name . '<h4>Localización: </h4>' . $informacion[0]->user->location;
-
-
-                    for ($i = 0; $i < count($informacion); $i++)
-                    {
-                        //if (isset($informacion[$i]->text))
-                            echo '<h4>Twitters: </h4>' . $informacion[$i]->text . '<h4>Total retwiteos: </h4>' . $informacion[$i]->retweet_count;
-                    }
-
+                    $contenido.="Este usuario no ha twitteado nada todavía.<br/>";
                 }
+                echo $contenido;
                 break;
 
-            case "publicar":
-                $texto = $_POST['texto'];
-                //$mensaje=array('status'=>$texto);
-                $informacion = $twitter->post('statuses/update', array('status' => $texto));
-
-                echo $texto;
-
+            case 'publicar':
+                $publicacion = $twitter->post('statuses/update', array('status' => $_POST['informacion']));
+                echo "Su tweet fue publicado correctamente.";
                 break;
         }
+        break;
 }
 ?>

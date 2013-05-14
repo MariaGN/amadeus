@@ -106,7 +106,7 @@ class Basedatos
                 $contenido.="Si usted no ha realizado dicha petición, simplemente borre este correo y en breve el registro será borrado de nuestra base de datos.<br/><br/>";
                 $contenido.="En otro caso, confirme su registro antes de 24 H en la siguiente dirección de Amadeus:<br/>";
                 $contenido.="<a href='" . Config::$urlAplicacion . "/confirmar.html?nick=$nick&token=$token'>Confirmación registro en web viajes Amadeus</a><br/><br/>";
-                $contenido.="IP registrada: " . obtenerIP() . "<br/><br/>";
+                //$contenido.="IP registrada: " . obtenerIP() . "<br/><br/>";
                 $contenido.="Reciba un cordial saludo.<br/><br/>Agencia de viajes Amadeus &copy; 2013.";
 
                 if (enviarCorreo($nombre . ' ' . $apellidos, $email, 'Confirmación registro en Viajes Amadeus', $contenido))

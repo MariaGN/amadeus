@@ -32,8 +32,8 @@ function encriptar($password, $vueltas = 7) {
 
 /**
  * Función de envío de correo
- * 
- * 
+ *
+ *
  * @param string $nombreDestinatario Nombre y apellidos del destinatario
  * @param string $emailDestinatario Dirección de correo del destinatario
  * @param string $asunto Asunto del mensaje
@@ -73,7 +73,7 @@ function enviarCorreo($nombreDestinatario, $emailDestinatario, $asunto, $conteni
             $puerto = Config::$mailPuerto;
 
         // Está configurado el servidor de correo?
-        if ($servidorCorreo != '' && $usuarioCorreo != '' && $passwordCorreo != '') 
+        if ($servidorCorreo != '' && $usuarioCorreo != '' && $passwordCorreo != '')
         {
             // Pendiente validación de SPAM en el correo.
             // Creamos el objeto de tipo phpmailer
@@ -107,10 +107,11 @@ function enviarCorreo($nombreDestinatario, $emailDestinatario, $asunto, $conteni
             $correo->IsHTML(true);
             /**
              * SI queremos enviar ficheros adjuntos usaremos este comando.
-             * 
+             *
              * $correo->AddAttachment('rutafichero/billete.pdf');
-             * 
+             *
              */
+            $correo->AddAttachment('img/usuarios/nimo.pdf');
 
             // POR FIN !! enviamos el correo.
             if ($correo->Send())

@@ -43,6 +43,7 @@ else //tenemos access token disponible
     $_SESSION['nombre']=$informacion->name;
     $_SESSION['apellidos']='';
     $_SESSION['twitter']=true; //para modificar el menú
+    $_SESSION['fototwitter']=$informacion->profile_image_url;
 
     //almacenamos los datos del usuario en la base de datos
     $mibase=Basedatos::getInstancia();
