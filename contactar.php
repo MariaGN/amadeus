@@ -1,55 +1,36 @@
-  <div class="wrapper">
+<script type="text/javascript" src="js/contactar.js"></script>
+<div class="wrapper">
 
 	       <div class="grids top">
 
 		    <div class="grid-6 grid">
-			 <h2>Address</h2>
+			 <h2>Dirección</h2>
 			 <div>
 			      <p class="bottom">
-				   Jane Doe<br />
-				   Some street 123<br />
-				   Name of State<br />
-				   Country<br /><br />
-				   Phone: 123 456 789<br />
-				   Fax: 123 456 789 - 11<br />
-				   Email: jane@some.com
+				   IES San Clemente<br />
+				   C./ San Clemente s/n.<br />
+				   Santiago de Compostela<br />
+				   Spain<br /><br />
+				   Telefono: +34 981 580 496<br />
+				   Fax: +34 981 580 366<br />
+                                   Email: proteger@este-email
                               </p>
 			 </div>
 
 
-			 <div class="green bottom">
-			      <h3>Formalize</h3>
-			      <p>This subpage includes the great JQuery plugin <strong>
-					<a href="http://formalize.me/" title="Formalize Website">Formalize</a></strong>
-				   by Nathan Smith.
-				   <a href="http://formalize.me/" title="Formalize Website">Visit the website</a> to find out what it does and see the demos!
-				   You don´t have to use a table as shown here (this is just an example), you can build your form without tables, too.
-				   Inspect the CSS to utilize the classes that fit your needs.<br />
-				   Comment or delete the section "Forms" in inuit.css when you make use of Formalize so the styles won´t interfere.
-			      </p>
-			 </div>
 
-			 <div>
-			      <p class="message warning bottom">
-				   <b>Note:</b> This is just a demo for contact form styles and behaviour. <b>It doesn't actually submit anything.</b>
-				   To make it work, you will have to include a fitting script.
-                              </p>
-			 </div>
 		    </div>
 
-
-
-
-		    <!--===============================================================  Contact form =====================================================================================-->
+    <!--===============================================================  Contact form =====================================================================================-->
 		    <div class="grid-10 grid">
 
-			 <h2>Contact us</h2>
-			 <form  action="#" method="post" enctype="multipart/form-data" onsubmit="return false">
+			 <h2>Contacto</h2>
+			 <form  action="#" method="post" enctype="multipart/form-data" onsubmit="return false" name="formulario" id="formulario">
                               <table class="form">
 				   <tr>
 					<th>
 					     <label for="name">
-						  Name
+						  Nombre
 					     </label>
 					</th>
 					<td>
@@ -73,7 +54,7 @@
 
 					<th>
 					     <label for="tel">
-						  Phone
+						  Telefono
 					     </label>
 					</th>
 					<td>
@@ -83,72 +64,46 @@
 
 				   <tr>
 					<th>
-					     <label for="url">
+					     <label for="web">
 						  URL
 					     </label>
 					</th>
 					<td>
-					     <input class="input_full" type="text" id="url" name="url" placeholder="http://" />
+					     <input class="input_full" type="text" id="web" name="web" placeholder="http://" />
 					</td>
 
 				   </tr>
 				   <tr>
 					<th>
-					     <label for="subject">
-						  Subject
+					     <label for="asunto">
+						  Asunto
 					     </label>
 					</th>
 					<td>
-					     <select class="input_full" id="subject" name="subject">
+					     <select class="input_full" id="asunto" name="asunto">
 
-						  <option value="">Choose subject...</option>
-
-						  <option value="1k_2k">Question</option>
-						  <option value="2k_3k">Project</option>
-						  <option value="3k_4k">Feedback</option>
-						  <option value="4k_5k">Other</option>
+						  <option value="">Elegir Asunto...</option>
+						  <option value="Preguntas">Preguntas</option>
+						  <option value="Proyecto">Proyecto</option>
+						  <option value="Feedback">Feedback</option>
+						  <option value="Otros">Otros</option>
 
 					     </select>
 					</td>
 				   </tr>
 				   <tr>
 
-					<th>
-					     <label for="priority_normal">
-						  Priority
-					     </label>
-					</th>
-					<td>
-					     <input type="radio" name="priority" id="priority_urgent" value="Urgent">
-					     <label for="priority_urgent">
-						  Urgent
-					     </label>
-
-					     &nbsp;
-					     &nbsp;
-					     <input type="radio" name="priority" id="priority_normal" value="Normal" checked="checked">
-					     <label for="priority_normal">
-						  Normal
-					     </label>
-					     &nbsp;
-					     &nbsp;
-					     <input type="radio" name="priority" id="priority_low" value="Low">
-
-					     <label for="priority_low">
-						  Low
-					     </label>
-					</td>
-				   </tr>
+			   </tr>
 				   <tr>
 					<th>
 
 					     <label for="description">
-						  Your<br />
-						  message
+						  Su<br />
+						  mensaje
 					     </label>
 					</th>
 					<td>
-					     <textarea id="description" name="description" rows="8" required="required" placeholder="Please write your message here."></textarea>
+					     <textarea id="description" name="description" rows="8" required="required" placeholder="Escriba su mensaje aquí."></textarea>
 					</td>
 
 				   </tr>
@@ -162,18 +117,20 @@
 					<td>
 					     <input type="checkbox" id="cc" name="cc" value="1" />
 					     <label for="cc">
-						  Send me a copy of this email
+						  Enviarme una copia del e-mail
 					     </label>
 					</td>
 				   </tr>
                               </table>
 
                               <p>
-				   <input type="submit" value="Send" class="float_left" />
-				   <input type="reset" value="Reset" class="float_right">
+                                  <input type="reset" value="Limpiar" class="float_right">
+				   <input type="submit" value="Enviar" class="float_left" />
+
                               </p>
 			 </form>
-
+                         <div id="mensajes"></div>
 
 		    </div><!--end of grid-10-->
 	       </div><!--end of grids-->
+  </div>

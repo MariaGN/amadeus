@@ -10,6 +10,13 @@ header('Expires: Mon, 01 Jan 1973 00:00:00 GMT');
 // Cargamos la clase basedatos.
 require_once("lib/basedatos.php");
 require_once("lib/rss.php");
+require_once("lib/config.php");
+
+
+require_once("lib/class.inputfilter.php");
+$filtro = new InputFilter();
+$_POST = $filtro->process($_POST);
+
 
 // Creamos el objeto con el patrón diseño Singleton.
 // No podemos usar $mibase= new Basedatos(), por que
@@ -160,6 +167,38 @@ switch ($_GET['op']) {
                 echo "Su tweet fue publicado correctamente.";
                 break;
         }
+        break;
+    case 13:
+        $contenido='';
+        $contenido.='Nombre : '.$_POST['name'].'<br>';
+        $contenido.='Email : '.$_POST['email'].'<br>';
+        $contenido.='Telefono : '.$_POST['tel'].'<br>';
+        $contenido.='URL : '.$_POST['web'].'<br>';
+        $contenido.='Asunto :'.$_POST['asunto'].'<br>';
+        $contenido.='Mensaje: '.$_POST['description'];
+
+        /*if(isset($_POST['cc']) & $_POST['cc']==1)
+        {
+            echo enviarCorreo('Webmaster',Config::$webmaster, 'Datos contacto', $contenido);
+            echo enviarCorreo($_POST['name'],$_POST['email'], 'Datos contacto', $contenido);
+        }
+        else
+            echo enviarCorreo('Webmaster',Config::$webmaster, 'Datos contacto', $contenido);
+          */
+
+        if(enviarCorreo('Webmaster',Config::$webmaster, 'Datos contacto', $contenido) )
+        {
+           if (isset($_POST['cc']) & $_POST['cc']==1)
+           {
+                enviarCorreo($_POST['name'],$_POST['email'], 'Datos contacto', $contenido);
+
+           }
+            echo 'Ha enviado los datos de contacto';
+        }
+        else
+            echo 'No se ha podido enviar ';
+
+
         break;
 }
 ?>

@@ -10,6 +10,8 @@ class Config{
     public static $dbPassword="abc123.";
     public static $dbDatabase="c29prueba";
 
+    public static $webmaster="mari_lesende@yahoo.es";
+
 
 
     //Parametros de configuración del correo

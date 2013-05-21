@@ -354,7 +354,9 @@ class Basedatos
 
         $_SESSION['nombre'] = $nombre;
         $_SESSION['apellidos'] = $apellidos;
+          $_SESSION['dni'] = $dni;
         $_SESSION['password'] = $password;
+          $_SESSION['telefono'] = $telefono;
         $_SESSION['email'] = $email;
         $_SESSION['token'] = $token;
         $_SESSION['fotografia'] = $fotografia;
@@ -364,6 +366,42 @@ class Basedatos
 
         // Liberamos el espacio ocupado por el recordset
         $stmt->free_result();
+    }
+
+
+/**
+ *Funcion para mostrar nombre y apellidos de usuarios de la bb.dd
+ * @return string
+ */
+    public function obtenerUsuarios()
+    {
+        // Preparamos la consulta.
+        $stmt = self::$_mysqli->prepare("select nombre, apellidos from amadeus_usuarios") or die(self::$_mysqli->error);
+
+        // Ejecutamos la consulta.
+        $stmt->execute();
+
+        // Almacenamos el resultado.
+        $stmt->store_result();
+
+        // Vinculamos las variables para el recordset.
+        $stmt->bind_result( $nombre, $apellidos);
+
+
+        $cadena='<table border="1"><tr><th>Nombre</th><th>Apellidos</th></tr>';
+        // Leemos la fila del recordset
+        while($stmt->fetch())
+        {
+            $cadena.='<tr><td>'.$nombre.'</td><td>'.$apellidos.'</td></tr>';
+        }
+        $cadena.='</table>';
+
+
+        // Liberamos el espacio ocupado por el recordset
+        $stmt->free_result();
+
+        //Devolvemos la cadena
+        return $cadena;
     }
 
     //----------------------------------------------------------------------------------------------------

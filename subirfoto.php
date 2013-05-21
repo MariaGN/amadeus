@@ -1,5 +1,5 @@
 <script type="text/javascript" src="js/editarusuario.js"></script>
-<script type="text/javascript" src="js/pdf.js"></script>
+
 
 <style type="text/css">
     #mensajes{
@@ -27,7 +27,7 @@
                     if (isset($_SESSION['fotografia']) && $_SESSION['fotografia'] != '')
                         echo '<li><a href="borrarfoto.php" />Borrar Fotografía</a></li>';
                     ?>
-                    <li><a href="generarpdf.php" id="imprimircarnet" />Imprimir/Enviar Carnet Socio</a></li>
+                    <li><a href="generarpdf.html" id="imprimircarnet" />Imprimir/Enviar Carnet Socio</a></li>
                     <li><a href="#" id="bajausuario" />Darse de Baja</a></li>
                 </ul>
                 </p>
