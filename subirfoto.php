@@ -50,7 +50,7 @@
 
             <form action="upload.php" name="form1" id="form1" method="post" enctype="multipart/form-data">
                 <p><input type="file" name="ficherosubido" id="ficherosubido" /><br/>
-                    Extensiones: jpg, jpeg, gif, png.
+                    Extensiones: jpg, jpeg, png.
                 </p>
 
                 <p>

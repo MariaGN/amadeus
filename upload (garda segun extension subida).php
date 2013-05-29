@@ -31,7 +31,7 @@ if (isset($_SESSION['usuario'])) {
         imagealphablending($imagen, false);
 
 
-
+      
         //cargamos a marca de auga
         $marcaagua = imagecreatefromstring(file_get_contents('img/watermark.png'));
         $anchomarcaagua = imagesx($marcaagua);
@@ -40,9 +40,9 @@ if (isset($_SESSION['usuario'])) {
         $posicionxmarcaagua=imagesx($imagennueva) - $anchomarcaagua - 5;
         $posicionymarcaagua=imagesy($imagennueva)-$altomarcaagua -5;
 
-
-
-
+ 
+    
+    
         // Redimensionar
         //para manter o alto proporcional o ancho especificado
         $ratio_org = imagesx($imagen) / imagesy($imagen);
@@ -60,21 +60,21 @@ if (isset($_SESSION['usuario'])) {
         imagealphablending($imagennueva,true);
         imagesavealpha($imagennueva, true);
 
-
-
-
+     
+       
+     
         //especificamos o texto a engadirlle a imaxe
         $texto="Amadeus Copyright ". date('Y') . ".";
         //especificamos a cor do texto
-        $color = imagecolorallocate($imagen, 135, 159, 0);
+        $color = imagecolorallocate($imagen, 135, 159, 0);  
         //calculamos a distancia
         $distancia = (250 - 7 * strlen($texto)) - 30;
         //situamos o texto na imaxe
         imagestring($imagennueva, 3, $distancia, (imagesy($imagennueva)-18), $texto, $color);
 
 
-
-
+   
+       
         //copiamos a marca de auga na foto redimensionada na posicion calculada anteriormente
         imagecopy($imagennueva, $marcaagua, $posicionxmarcaagua , $posicionymarcaagua, 0, 0, $anchomarcaagua, $altomarcaagua);
         $calidad=0;
@@ -82,8 +82,8 @@ if (isset($_SESSION['usuario'])) {
         //finalmente gardamos en disco a imaxe resultante
         //imagepng($imagennueva,$directorioImagenes.$nombreFicheroSinExtension.".png",$calidad);  //asi gardame efectivamente a png ca marca de auga, pero creame unha jpg se a k subo e jpg e mostrama sen marca de auga,¿x?
         imagepng($imagennueva,$rutaFicheroAvatar,$calidad); //funciona, pero gardama co tipo de extension que ten a foto subida //    MIRAR
-
-
+        
+        
            // Actualizamos la base de datos
         require_once 'lib/basedatos.php';
         $mibase = Basedatos::getInstancia();

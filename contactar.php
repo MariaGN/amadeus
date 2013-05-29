@@ -13,7 +13,7 @@
 				   Spain<br /><br />
 				   Telefono: +34 981 580 496<br />
 				   Fax: +34 981 580 366<br />
-                                   Email: proteger@este-email
+                                   <img src='email.php'/>
                               </p>
 			 </div>
 
